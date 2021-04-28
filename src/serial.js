@@ -7,10 +7,16 @@ const fromHexString = hexString =>
 function buf2hex(buffer) { // buffer is an ArrayBuffer
     return [...new Uint8Array(buffer)].map(x => x.toString(16).padStart(2, '0')).join('');
   }
+  
 const toHexString = bytes =>
     bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
 
 class Serial {
+    constructor() {
+        this.buffer = [];
+        this.send_active = false;
+    }
+
     static getPorts() {
         return navigator.usb.getDevices().then(devices => {
             return devices;
@@ -98,8 +104,8 @@ class Serial {
     read(num) {
         return new Promise((resolve, reject) => {
             this.device.transferIn(this.epIn, num).then(result => {
-                console.log("Result");
-                console.log(result);
+                // console.log("Result");
+                // console.log(result);
                 resolve(result);
             },
             error => {
@@ -137,15 +143,44 @@ class Serial {
     }
 
     sendString(str) {
-        this.send(new TextEncoder('utf-8').encode(str));
+        return this.send(new TextEncoder('utf-8').encode(str));
     }
 
     sendHex(str) {
-        this.send(fromHexString(str));
+        return this.send(fromHexString(str));
     }
 
     send(data) {
-        this.device.transferOut(this.epOut, data);
+        return this.device.transferOut(this.epOut, data);
+    }
+
+    bufSendFunction() {
+        this.send_active = true;
+        if(this.buffer.length == 0) {
+            this.send_active = false;
+            return;
+        }
+        var element = this.buffer.shift();
+        var data = element[0];
+        var delay = element[1];
+        this.send(data).then(() => {
+            setTimeout(() => {
+                this.bufSendFunction();
+            }, delay);
+        });
+    }
+
+    bufSend(data, delay) {
+        this.buffer.push([data, delay]);
+        // Sender is not active, create new one
+        if(!this.send_active) {
+            this.bufSendFunction();
+        }
+    }
+
+    bufSendHex(str, delay) {
+        var data = fromHexString(str);
+        this.bufSend(data, delay);
     }
 }
 
