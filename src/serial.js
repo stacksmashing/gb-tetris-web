@@ -156,7 +156,7 @@ class Serial {
 
     bufSendFunction() {
         this.send_active = true;
-        if(this.buffer.length == 0) {
+        if(this.buffer.length === 0) {
             this.send_active = false;
             return;
         }

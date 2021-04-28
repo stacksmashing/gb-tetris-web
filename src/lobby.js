@@ -14,6 +14,7 @@ class Lobby extends React.Component {
         return (
             <div>
                 <h2>In Lobby: {this.props.game_code}</h2>
+                <h4>Players:</h4>
                 <div className="container">
                     <div className="row">
                             {this.props.users.map((user, index) => (

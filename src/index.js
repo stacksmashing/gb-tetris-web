@@ -165,7 +165,7 @@ class OnlineTetris extends React.Component {
   }
 
   updateLevel(level) {
-    if(this.state.level != level) {
+    if(this.state.level !== level) {
       console.log("Level increased!");
       console.log(level);
       this.setState({
@@ -225,8 +225,6 @@ class OnlineTetris extends React.Component {
         } else {
           
           var value = (new Uint8Array(data))[0];
-          console.log("Value:")
-          console.log(value);
           if(value < 20) {
             this.updateLevel(value);
           } else if((value >= 0x80) && (value <= 0x85)) { // lines sent
@@ -242,7 +240,6 @@ class OnlineTetris extends React.Component {
           }
           
         }
-        console.log(buf2hex(result.data));
         this.startGameTimer();
       });
       
@@ -329,6 +326,7 @@ class OnlineTetris extends React.Component {
     this.gb.ongameend = this.gbGameEnd.bind(this);
     this.gb.onuserinfo = this.gbUserInfo.bind(this);
     this.gb.onlines = this.gbLines.bind(this);
+    this.gb.onwin = this.gbWin.bind(this);
   }
 
   testCreate() {
@@ -459,6 +457,15 @@ class OnlineTetris extends React.Component {
     console.log("lines");
     this.serial.bufSend(new Uint8Array([lines]), 10);
   }
+
+  gbWin(gb) {
+    console.log("WIN!");
+    this.serial.bufSendHex("AA", 50); // aa indicates BAR FULL
+    this.serial.bufSendHex("02", 50); // ffffinish
+    this.serial.bufSendHex("02", 50); // ffffinish
+    this.serial.bufSendHex("02", 50); // ffffinish
+    this.serial.bufSendHex("43", 50); // go to final screen. nice.
+  }
 //   this.onconnected = function(gb) {
 //     console.log("On connected not implemented");
 // }
@@ -540,7 +547,7 @@ class OnlineTetris extends React.Component {
         return (
 
           <div className="connect">
-            <h1>{this.state.name}</h1>
+            {/* <h1>{this.state.name}</h1>
             <h3>level: {this.state.level}</h3>
             <Players users={this.state.users}/>
             <h4>Users:</h4>
@@ -548,7 +555,7 @@ class OnlineTetris extends React.Component {
               <p>Player {user.name} level {user.level}!</p>
           ))}
             <input type="text" onChange={this.handleNameChanged.bind(this)} value={this.state.name} />
-            <input type="text" onChange={this.handleGameCodeChanged.bind(this)} value={this.state.game_code} placeholder="ABCDEF"/>
+            <input type="text" onChange={this.handleGameCodeChanged.bind(this)} value={this.state.game_code} placeholder="ABCDEF"/> */}
             <h1 className="cover-heading">Game Boy Tetris Online</h1>
 
             <p className="lead">Connect your Game Boy, boot Tetris, and start playing with your friends!</p>
@@ -556,13 +563,13 @@ class OnlineTetris extends React.Component {
             <h3>Connect your Game Boy</h3>
             <p>Connect your Game Boy with the USB to Game Link adapter and click "connect".</p>
             <button onClick={(e) => this.handleConnectClick()} className="btn btn-lg btn-secondary">Connect</button>
-            <br/>
+            {/* <br/>
             <button onClick={(e) => this.testCreate()} className="btn btn-lg btn-secondary">Test create</button>
             <button onClick={(e) => this.testJoin()} className="btn btn-lg btn-secondary">Test join</button>
             <br/>
             <button onClick={(e) => this.testStart()} className="btn btn-lg btn-secondary">Test start</button>
             <button onClick={(e) => this.testUpdate()} className="btn btn-lg btn-secondary">Test update</button>
-            <button onClick={(e) => this.testJoin()} className="btn btn-lg btn-secondary">Test join</button>
+            <button onClick={(e) => this.testJoin()} className="btn btn-lg btn-secondary">Test join</button> */}
             <br/>
             <small>Our UUID: {this.state.uuid}</small>
           </div>
@@ -602,7 +609,7 @@ class OnlineTetris extends React.Component {
       } else if(this.state.state === this.StateSelectHandicap) {
         return (
           <div className="connect">
-            <SelectGame onCreateGame={(name) => this.handleCreateGame(name)} onJoinGame={(name, code) => this.handleCreateGame(name, code)} />
+            <SelectGame onCreateGame={(name) => this.handleCreateGame(name)} onJoinGame={(name, code) => this.handleJoinGame(name, code)} />
           </div>)
       } else if(this.state.state === this.StateJoiningGame) {
         return(<div className="connect">
@@ -610,7 +617,7 @@ class OnlineTetris extends React.Component {
         </div>)
       } else if(this.state.state === this.StateLobby) {
         return(<div className="connect">
-          <h2>In lobby :)</h2>
+          {/* <h2>In lobby :)</h2> */}
           <Lobby game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} onStartGame={() => this.handleStartGame()} />
         </div>)
       } else if(this.state.state === this.StateStartingGame) {
@@ -642,7 +649,9 @@ class OnlineTetris extends React.Component {
       } else if(this.state.state === this.StateFinished) {
         return (<div className="connect">
           <InGame game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} uuid={this.state.uuid} />
-            <h2>Game finished - you probably lost!</h2>
+            <h2>Game finished!</h2>
+            <p>Unfortunately you need to reboot your Game Boy and refresh the page to try again.</p>
+            <p>This is because stacksmashing is freaking lazy.</p>
             </div>)
       } else {
         return (

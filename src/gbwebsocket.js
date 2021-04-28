@@ -45,6 +45,10 @@ class GBWebsocket {
         this.onlines = function(gb, lines) {
             console.log("Lines not implemented!")
         }
+
+        this.onwin = function(gb) {
+            console.log("Win not implemented!")
+        }
         console.log(this.ongameupdate);
 
         this.admin = false;
@@ -104,13 +108,13 @@ class GBWebsocket {
     }
 
     static initiateGame(name) {
-        var gb = new GBWebsocket("wss://192.168.178.122:5678/create", name);
+        var gb = new GBWebsocket("wss://server.tetris.stacksmashing.net:5678/create", name);
         gb.admin = true;
         return gb;
     }
 
     static joinGame(name, code) {
-        return new GBWebsocket("wss://192.168.178.122:5678/join/" + code, name)
+        return new GBWebsocket("wss://server.tetris.stacksmashing.net:5678/join/" + code, name)
     }
 
     onMessage(event) {
@@ -156,6 +160,10 @@ class GBWebsocket {
             case "lines":
                 console.log("Lines")
                 this.onlines(this, message.lines);
+                break;
+            case "win":
+                console.log("Lines")
+                this.onwin(this);
                 break;
             default:
                 console.log("Unknown message");
