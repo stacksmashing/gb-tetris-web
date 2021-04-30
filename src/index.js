@@ -228,7 +228,8 @@ class OnlineTetris extends React.Component {
           if(value < 20) {
             this.updateLevel(value);
           } else if((value >= 0x80) && (value <= 0x85)) { // lines sent
-
+            console.log("Sending lines!");
+            this.gb.sendLines(0x83);
           }
           else if(value === 0xaa) { // we lost...
             this.setState({
@@ -571,7 +572,7 @@ class OnlineTetris extends React.Component {
             <button onClick={(e) => this.testUpdate()} className="btn btn-lg btn-secondary">Test update</button>
             <button onClick={(e) => this.testJoin()} className="btn btn-lg btn-secondary">Test join</button> */}
             <br/>
-            <small>Our UUID: {this.state.uuid}</small>
+            <small>Our UUID: {this.state.uuid} Version: 0.1</small>
           </div>
         )
       } else if (this.state.state === this.StateConnecting) {
@@ -629,8 +630,8 @@ class OnlineTetris extends React.Component {
         return(<div className="connect">
 
           <InGame game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} />
-          <button onClick={(e) => this.testFinish()} className="btn btn-lg btn-secondary">Finish</button>
-          <button onClick={(e) => this.testLines()} className="btn btn-lg btn-secondary">send lines</button>
+          {/* <button onClick={(e) => this.testFinish()} className="btn btn-lg btn-secondary">Finish</button>
+          <button onClick={(e) => this.testLines()} className="btn btn-lg btn-secondary">send lines</button> */}
         </div>)
         
       } else if(this.state.state === this.StateJoinGame) {
