@@ -9,25 +9,25 @@ class Player extends React.Component {
         if(this.props.user.state === this.STATE_ALIVE) {
             return (
                 <div className="col-3">
-                    <img src="{process.env.PUBLIC_URL + '/images/animation.gif'}%" style="max-width: 100px; object-fit: contain;" />
-                    <p><b>{this.props.user.name}</b></p>
-                    <p>Height: {this.props.user.level}</p>
+                    <img src={process.env.PUBLIC_URL + '/images/animation.gif'} className="gameboy" />
+                    <p><b>{this.props.user.name}</b><br/>
+                    Height: {this.props.user.level}</p>
                 </div>
             )
         } else if(this.props.user.state === this.STATE_DEAD) {
             return (
                 <div className="col-3">
-                    <img src="{process.env.PUBLIC_URL + '/images/dead.png'}%" style="max-width: 100px; object-fit: contain;" />
-                    <p><b>{this.props.user.name}</b></p>
-                    <p>Game Over</p>
+                    <img src={process.env.PUBLIC_URL + '/images/dead.png'} className="gameboy" />
+                    <p><b>{this.props.user.name}</b><br/>
+                    Game Over</p>
                 </div>
             )
         } else if(this.props.user.state === this.STATE_WINNER) {
             return (
                 <div className="col-3">
-                    <img src="{process.env.PUBLIC_URL + '/images/win.png'}%" style="max-width: 100px; object-fit: contain;" />
-                    <p><b>{this.props.user.name}</b></p>
-                    <p>Winner!!!</p>
+                    <img src={process.env.PUBLIC_URL + '/images/win.png'} className="gameboy" />
+                    <p><b>{this.props.user.name}</b><br/>
+                    Winner!!!</p>
                 </div>
             )
         }

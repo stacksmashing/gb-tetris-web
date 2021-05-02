@@ -20,7 +20,6 @@ class Serial {
     static getPorts() {
         return navigator.usb.getDevices().then(devices => {
             return devices;
-            // return devices.map(device => new serial.Port(device));
         });
     }
 
@@ -104,8 +103,6 @@ class Serial {
     read(num) {
         return new Promise((resolve, reject) => {
             this.device.transferIn(this.epIn, num).then(result => {
-                // console.log("Result");
-                // console.log(result);
                 resolve(result);
             },
             error => {

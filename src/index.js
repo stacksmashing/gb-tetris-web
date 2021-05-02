@@ -16,71 +16,9 @@ import { InGame } from './ingame.js';
 global.jQuery = require('jquery');
 require('bootstrap');
 
-function Square(props) {
-  return (
-    <button className="square" onClick={props.onClick}>
-      {props.value}
-    </button>
-  );
-}
-
 function buf2hex(buffer) { // buffer is an ArrayBuffer
   return [...new Uint8Array(buffer)].map(x => x.toString(16).padStart(2, '0')).join('');
 }
-
-class Board extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-      xIsNext: true,
-    };
-  }
-
-  handleClick(i) {
-    const squares = this.state.squares.slice();
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.setState({
-      squares: squares,
-      xIsNext: !this.state.xIsNext,
-    });
-  }
-
-  renderSquare(i) {
-    return (
-      <Square
-        value={this.state.squares[i]}
-        onClick={() => this.handleClick(i)}
-      />
-    );
-  }
-
-  render() {
-    const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-
-    return (
-      <div>
-        <div className="status">{status}</div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
-      </div>
-    );
-  }
-}
-
 
 class Players extends React.Component {
   constructor(props) {
@@ -286,8 +224,6 @@ class OnlineTetris extends React.Component {
   }
 
   handleSendClick() {
-    // this.serial = new Serial();
-    // this.serial.getDevice();
     this.serial.sendHex("29");
     this.serial.readString();
     this.timeoutFoo();
@@ -377,54 +313,38 @@ class OnlineTetris extends React.Component {
 
     // step 1: start game message
     this.serial.bufSendHex("60", 150);
-    // sleep(150); //checked with LA
     // step 2: Send master indication
-    this.serial.bufSendHex("29", 2);
-    // sleep(2);
-    // TODO: check read
-    // empty buf
-    // this.serial.read(64);
+    this.serial.bufSendHex("29", 4);
 
     console.log("Sending unknown bytes");
     // step 3: send 100 unknown bytes
     for(var i=0; i < 100; i++) {
-      this.serial.bufSendHex("83", 2);
-      // this.serial.read(64);
+      this.serial.bufSendHex("83", 4);
     }
 
     // step 4: send master again
-    this.serial.bufSendHex("29", 5);
-    // this.serial.read(64);
-    sleep(5);
+    this.serial.bufSendHex("29", 8);
     console.log("Sending tiles");
     // step 5: send tiles
     for(var i=0; i < gb.tiles.length; i++) {
-      this.serial.bufSend(new Uint8Array([gb.tiles[i]]), 3);
+      this.serial.bufSend(new Uint8Array([gb.tiles[i]]), 4);
       // this.serial.read(64);
       // sleep(3);
     }
-    // sleep(300);
-
-    // this.serial.sendHex(String(gb.tiles));
-    // sleep(100);
 
     // step 6: and go
-    this.serial.bufSendHex("30", 53);
-    this.serial.bufSendHex("00", 53);
-    this.serial.bufSendHex("02", 53);
-    this.serial.bufSendHex("02", 53);
-    this.serial.bufSendHex("20", 53);
-    // this.serial.read(64);
+    this.serial.bufSendHex("30", 70);
+    this.serial.bufSendHex("00", 70);
+    this.serial.bufSendHex("02", 70);
+    this.serial.bufSendHex("02", 70);
+    this.serial.bufSendHex("20", 70);
 
-
-    console.log("SENDING DONE suddenly")
     // Wait 3 seconds and then start game
     setTimeout(() => {
       this.setState({
         state: this.StateInGame
       });
       this.startGameTimer();
-      console.log("SENT SHOULD BE DONE");
     }, 2000)
     
   }
@@ -467,20 +387,6 @@ class OnlineTetris extends React.Component {
     this.serial.bufSendHex("02", 50); // ffffinish
     this.serial.bufSendHex("43", 50); // go to final screen. nice.
   }
-//   this.onconnected = function(gb) {
-//     console.log("On connected not implemented");
-// }
-
-// this.oninfoupdate = function(gb) {
-//     console.log("On info update not implemented!");
-// }
-// this.ongamestart = function(gb) {
-//     console.log("On game start not implemented!");
-// }
-
-// this.ongameupdate = function(gb) {
-//     console.log("Game update not implemented!");
-// }
 
   setMusic(music) {
     this.setState({
@@ -509,70 +415,21 @@ class OnlineTetris extends React.Component {
     });
   }
 
-  testLines() {
-    this.gb.sendLines(0x83);
-  }
-
-  testFinish() {
-
-    // WIN MESSAGES
-    // this.serial.sendHex("AA"); // aa indicates BAR FULL
-    // sleep(50);
-    // this.serial.sendHex("02"); // ffffinish
-    // sleep(50);
-    // this.serial.sendHex("02"); // ffffinish
-    // sleep(50);
-    // this.serial.sendHex("02"); // ffffinish
-    // sleep(50);
-    // this.serial.sendHex("43"); // go to final screen. nice.
-
-
-    // this.serial.sendHex("AA"); // aa indicates BAR FULL
-    // sleep(50);
-    // this.serial.sendHex("02"); // ffffinish
-    // sleep(50);
-    // this.serial.sendHex("02"); // ffffinish
-    // sleep(50);
-    // this.serial.sendHex("02"); // ffffinish
-    // sleep(50);
-    // this.serial.sendHex("43"); // go to final screen. nice.
-
-
-    // sleep(50);
-    // this.serial.sendHex("34"); // ffffinish
-  }
-
   render() {
     if (navigator.usb) {
       if (this.state.state === this.StateConnect) {
         return (
 
           <div className="connect">
-            {/* <h1>{this.state.name}</h1>
-            <h3>level: {this.state.level}</h3>
-            <Players users={this.state.users}/>
-            <h4>Users:</h4>
-            {this.state.users.map((user, index) => (
-              <p>Player {user.name} level {user.level}!</p>
-          ))}
-            <input type="text" onChange={this.handleNameChanged.bind(this)} value={this.state.name} />
-            <input type="text" onChange={this.handleGameCodeChanged.bind(this)} value={this.state.game_code} placeholder="ABCDEF"/> */}
-            <h1 className="cover-heading">Game Boy Tetris Online</h1>
-
+            <img src={process.env.PUBLIC_URL + '/images/animation.gif'} className="gameboy" />
+            <h2 className="cover-heading">Tetrilink</h2>
             <p className="lead">Connect your Game Boy, boot Tetris, and start playing with your friends!</p>
             <hr />
-            <h3>Connect your Game Boy</h3>
+            <h4>Connect your Game Boy</h4>
             <p>Connect your Game Boy with the USB to Game Link adapter and click "connect".</p>
             <button onClick={(e) => this.handleConnectClick()} className="btn btn-lg btn-secondary">Connect</button>
-            {/* <br/>
-            <button onClick={(e) => this.testCreate()} className="btn btn-lg btn-secondary">Test create</button>
-            <button onClick={(e) => this.testJoin()} className="btn btn-lg btn-secondary">Test join</button>
             <br/>
-            <button onClick={(e) => this.testStart()} className="btn btn-lg btn-secondary">Test start</button>
-            <button onClick={(e) => this.testUpdate()} className="btn btn-lg btn-secondary">Test update</button>
-            <button onClick={(e) => this.testJoin()} className="btn btn-lg btn-secondary">Test join</button> */}
-            <br/>
-            <small>Our UUID: {this.state.uuid} Version: 0.1</small>
+            <small>Version: 0.2</small>
           </div>
         )
       } else if (this.state.state === this.StateConnecting) {
@@ -630,8 +487,6 @@ class OnlineTetris extends React.Component {
         return(<div className="connect">
 
           <InGame game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} />
-          {/* <button onClick={(e) => this.testFinish()} className="btn btn-lg btn-secondary">Finish</button>
-          <button onClick={(e) => this.testLines()} className="btn btn-lg btn-secondary">send lines</button> */}
         </div>)
         
       } else if(this.state.state === this.StateJoinGame) {
@@ -651,8 +506,8 @@ class OnlineTetris extends React.Component {
         return (<div className="connect">
           <InGame game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} uuid={this.state.uuid} />
             <h2>Game finished!</h2>
-            <p>Unfortunately you need to reboot your Game Boy and refresh the page to try again.</p>
-            <p>This is because stacksmashing is freaking lazy.</p>
+            {/* <p>Unfortunately you need to reboot your Game Boy and refresh the page to try again.</p>
+            <p>This is because stacksmashing is freaking lazy.</p> */}
             </div>)
       } else {
         return (
@@ -664,24 +519,6 @@ class OnlineTetris extends React.Component {
         <h2>Sorry, your browser does not support WebUSB!</h2>
       )
     }
-  }
-}
-
-
-
-class Game extends React.Component {
-  render() {
-    return (
-      <div className="game">
-        <div className="game-board">
-          <Board />
-        </div>
-        <div className="game-info">
-          <div>{/* status */}</div>
-          <ol>{/* TODO */}</ol>
-        </div>
-      </div>
-    );
   }
 }
 

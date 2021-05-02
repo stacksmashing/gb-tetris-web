@@ -16,7 +16,7 @@ class Lobby extends React.Component {
                 <h2>In Lobby: {this.props.game_code}</h2>
                 <h4>Players:</h4>
                 <div className="container">
-                    <div className="row">
+                    <div className="row justify-content-center">
                             {this.props.users.map((user, index) => (
                                 <Player key="lobby-{user.name}" user={user} />
                         ))}

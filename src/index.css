@@ -164,3 +164,36 @@ body {
   margin-right: 10px;
   margin-left: 10px;
 }
+
+.connect {
+  text-align: center;
+}
+.gameboy {
+  max-width: 75px;
+  object-fit: contain;
+}
+
+.username-input {
+  background-color: rgb(65, 65, 65);
+  color: white;
+  font-weight: 700;
+  border-color: gray;
+  text-align: center;
+  width: 300pt;
+  display: inline;
+}
+
+.game-code-input {
+  background-color: rgb(65, 65, 65);
+  color: white;
+  font-weight: 700;
+  border-color: gray;
+  text-align: center;
+  display: inline;
+  margin-bottom: 20px;
+}
+
+.custom-card {
+  background-color: #444;
+  height: 194px;
+}
