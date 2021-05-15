@@ -4,11 +4,11 @@ import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 
-import { Serial } from './serial.js';
-import { GBWebsocket } from './gbwebsocket.js';
-import { Lobby } from './lobby.js';
-import { SelectGame } from './selectgame.js';
-import { InGame } from './ingame.js';
+import Serial from './Serial';
+import GBWebsocket from './GBWebsocket';
+import Lobby from './Lobby';
+import SelectGame from './SelectGame';
+import InGame from './InGame';
 
 class OnlineTetris extends React.Component {
   SONG_A   = "1C"

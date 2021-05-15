@@ -149,4 +149,4 @@ class GBWebsocket {
     }
 }
 
-export { GBWebsocket };
+export default GBWebsocket;

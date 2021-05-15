@@ -85,4 +85,4 @@ class SelectGame extends React.Component {
     }
 }
 
-export { SelectGame };
+export default SelectGame;

@@ -142,4 +142,4 @@ class Serial {
     }
 }
 
-export { Serial };
+export default Serial;

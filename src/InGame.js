@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Player} from './player.js';
+import Player from './Player';
 
 class InGame extends React.Component {
     render() {
@@ -19,4 +19,4 @@ class InGame extends React.Component {
     }
 }
 
-export { InGame };
+export default InGame;

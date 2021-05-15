@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Player} from './player.js';
+import Player from './Player';
 
 class Lobby extends React.Component {
     render() {
@@ -28,4 +28,4 @@ class Lobby extends React.Component {
     }
 }
 
-export { Lobby };
+export default Lobby;
