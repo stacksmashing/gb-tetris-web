@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.js';
 import 'bootstrap/dist/js/bootstrap.bundle'
@@ -12,42 +11,6 @@ import { GBWebsocket } from './gbwebsocket.js';
 import { Lobby } from './lobby.js';
 import { SelectGame } from './selectgame.js';
 import { InGame } from './ingame.js';
-
-global.jQuery = require('jquery');
-require('bootstrap');
-
-function buf2hex(buffer) { // buffer is an ArrayBuffer
-  return [...new Uint8Array(buffer)].map(x => x.toString(16).padStart(2, '0')).join('');
-}
-
-class Players extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-
-  render() {
-    return <div className="container">
-      <div className="row">
-        {this.props.users.map((user, index) => (
-          <div className="col-3">
-            <h4>{user.name}</h4>
-            <p>{user.level}!</p>
-          </div>
-        ))}
-      </div>
-    </div>
-    
-  }
-}
-
-
-// yes yes JS is sooo asynchronous, we get it, you vape
-function sleep(ms) {
-  var start = new Date().getTime(), expire = start + ms;
-  while (new Date().getTime() < expire) { }
-  return;
-}
 
 class OnlineTetris extends React.Component {
   SONG_A   = "1C"
@@ -220,12 +183,6 @@ class OnlineTetris extends React.Component {
 
   handleHandicapSelected() {
     this.serial.sendHex()
-  }
-
-  handleSendClick() {
-    this.serial.sendHex("29");
-    this.serial.readString();
-    this.timeoutFoo();
   }
 
   handleCreateGame(name) {

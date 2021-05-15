@@ -6,21 +6,12 @@ const fromHexString = hexString =>
 
 function buf2hex(buffer) { // buffer is an ArrayBuffer
     return [...new Uint8Array(buffer)].map(x => x.toString(16).padStart(2, '0')).join('');
-  }
-  
-const toHexString = bytes =>
-    bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
+}
 
 class Serial {
     constructor() {
         this.buffer = [];
         this.send_active = false;
-    }
-
-    static getPorts() {
-        return navigator.usb.getDevices().then(devices => {
-            return devices;
-        });
     }
 
     static requestPort() {

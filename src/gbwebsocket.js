@@ -5,8 +5,6 @@ const fromHexString = hexString =>
     
 class GBWebsocket {
     // Needs to be in sync with server!!!
-    GAME_STATE_LOBBY = 0
-    GAME_STATE_RUNNING = 1
     GAME_STATE_FINISHED = 2
     GAME_STATE_ERROR = 9998
     GAME_STATE_NONE = 9999
