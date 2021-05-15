@@ -2,8 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.js';
-import 'bootstrap/dist/js/bootstrap.bundle'
 import './index.css';
 
 import { Serial } from './serial.js';
