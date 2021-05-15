@@ -89,7 +89,6 @@ class OnlineTetris extends React.Component {
     this.serial.getDevice().then(() => {
       console.log("Usb connected, updating status.");
       this.setState({
-        // status: this.StatusSelectMode
         state: this.StateConnectingTetris
         
       });
@@ -328,8 +327,6 @@ class OnlineTetris extends React.Component {
     // step 5: send tiles
     for(var i=0; i < gb.tiles.length; i++) {
       this.serial.bufSend(new Uint8Array([gb.tiles[i]]), 4);
-      // this.serial.read(64);
-      // sleep(3);
     }
 
     // step 6: and go
@@ -461,7 +458,6 @@ class OnlineTetris extends React.Component {
             <p>(Though obviously A is the best...)</p>
             <br/>
             <button onClick={(e) => this.handleMusicSelected()} className="btn btn-lg btn-secondary">Next</button>
-            {/* <button onClick={(e) => this.handleSendClick()} className="btn btn-lg btn-secondary">Send</button> */}
           </div>
         )
       } else if(this.state.state === this.StateSelectHandicap) {
@@ -475,7 +471,6 @@ class OnlineTetris extends React.Component {
         </div>)
       } else if(this.state.state === this.StateLobby) {
         return(<div className="connect">
-          {/* <h2>In lobby :)</h2> */}
           <Lobby game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} onStartGame={() => this.handleStartGame()} />
         </div>)
       } else if(this.state.state === this.StateStartingGame) {
@@ -506,8 +501,6 @@ class OnlineTetris extends React.Component {
         return (<div className="connect">
           <InGame game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} uuid={this.state.uuid} />
             <h2>Game finished!</h2>
-            {/* <p>Unfortunately you need to reboot your Game Boy and refresh the page to try again.</p>
-            <p>This is because stacksmashing is freaking lazy.</p> */}
             </div>)
       } else {
         return (

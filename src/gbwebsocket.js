@@ -1,4 +1,3 @@
-
 const fromHexString = hexString =>
     new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
@@ -170,11 +169,6 @@ class GBWebsocket {
                 console.log(message);
                 break;
         }
-
-        // console.log("THIS")
-        // console.log(this);
-        // console.log(this.ongameupdate);
-        // this.ongameupdate(this);
     }
 }
 
