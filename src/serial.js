@@ -22,9 +22,8 @@ class Serial {
     }
 
     getEndpoints(interfaces) {
-        interfaces.forEach(element => {
-            const alternates = element.alternates;
-            alternates.forEach(elementalt => {
+        interfaces.forEach(element =>
+            element.alternates.forEach(elementalt => {
                 if (elementalt.interfaceClass === 0xFF) {
                     console.log("Interface number:");
                     console.log(element.interfaceNumber);
@@ -43,90 +42,68 @@ class Serial {
                         }
                     });
                 }
-            })
-        });
+            }));
     }
 
-    getDevice() {
-        let device = null;
+    async getDevice() {
         this.ready = false;
-        return new Promise((resolve) => {
-            Serial.requestPort().then(dev => {
-                console.log("Opening device...");
-                device = dev;
-                this.device = device;
-                return dev.open();
-            }).then(() => {
-                console.log("Selecting configuration");
-                return device.selectConfiguration(1);
-            }).then(() => {
-                console.log("Getting endpoints")
-                this.getEndpoints(device.configuration.interfaces);
-            }).then(() => {
-                console.log("Claiming interface");
-                return device.claimInterface(this.ifNum);
-            }).then(() => {
-                console.log("Select alt interface");
-                return device.selectAlternateInterface(this.ifNum, 0);
-            }).then(() => {
-                console.log("Control Transfer Out");
-                return device.controlTransferOut({
-                    'requestType': 'class',
-                    'recipient': 'interface',
-                    'request': 0x22,
-                    'value': 0x01,
-                    'index': this.ifNum
-                })
-            }).then(() => {
-                console.log("Ready!");
-                this.ready = true;
-                this.device = device;
-                resolve();
-            })
-        });
+        const device = await Serial.requestPort();
+        console.log("Opening device...");
+        this.device = device;
+        await device.open();
+
+        console.log("Selecting configuration");
+        await device.selectConfiguration(1);
+        console.log("Getting endpoints")
+        this.getEndpoints(device.configuration.interfaces);
+        console.log("Claiming interface");
+        await device.claimInterface(this.ifNum);
+        console.log("Select alt interface");
+        await device.selectAlternateInterface(this.ifNum, 0);
+        console.log("Control Transfer Out");
+        await device.controlTransferOut({
+            'requestType': 'class',
+            'recipient': 'interface',
+            'request': 0x22,
+            'value': 0x01,
+            'index': this.ifNum
+        })
+        console.log("Ready!");
+        this.ready = true;
     }
 
-    read(num) {
-        return new Promise((resolve, reject) => {
-            this.device.transferIn(this.epIn, num).then(result => {
-                resolve(result);
-            },
-            error => {
-                console.log("Error");
-                console.log(error);
-                reject(error);
-            });
-        });
+    async read(num) {
+        try {
+            return await this.device.transferIn(this.epIn, num);
+        } catch (error) {
+            console.log("Error");
+            console.log(error);
+            throw error;
+        }
     }
 
-    readHex(num) {
-        return new Promise((resolve, reject) => {
-            this.read(num).then(result => {
-                console.log("RES");
-                console.log(result.data.buffer);
-                resolve(buf2hex(result.data.buffer));
-            },
-            error => {
-                reject(error);
-            })
-        });
+    async readHex(num) {
+        const result = await this.read(num);
+        console.log("RES");
+        console.log(result.data.buffer);
+        return buf2hex(result.data.buffer);
     }
 
-    readString() {
-        this.device.transferIn(this.epIn, 64).then(result => {
+    async readString() {
+        try {
+            const result = await this.device.transferIn(this.epIn, 64);
             console.log("ReadResult");
             console.log(result);
             const textDecoder = new TextDecoder();
             console.log(textDecoder.decode(result.data));
-        },
-        error => {
+        } catch (error) {
             console.log("ReadError");
             console.log(error);
-        })
+        }
     }
 
     sendString(str) {
-        return this.send(new TextEncoder('utf-8').encode(str));
+        return this.send(new TextEncoder().encode(str));
     }
 
     sendHex(str) {
@@ -139,7 +116,7 @@ class Serial {
 
     bufSendFunction() {
         this.send_active = true;
-        if(this.buffer.length === 0) {
+        if (this.buffer.length === 0) {
             this.send_active = false;
             return;
         }

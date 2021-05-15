@@ -28,6 +28,7 @@ class OnlineTetris extends React.Component {
   StateStartingGame = "StartingGame";
   StateJoinGame = "SelectJoinGame";
   StateInGame = "InGame";
+  StateFinished = "StateFinished";
 
   constructor(props) {
     super(props);
@@ -44,27 +45,29 @@ class OnlineTetris extends React.Component {
     };
   }
 
-  handleConnectClick() {
+  async handleConnectClick() {
     this.serial = new Serial();
     this.setState({
       state: this.StateConnecting
     });
-    this.serial.getDevice().then(() => {
+    try {
+      await this.serial.getDevice();
       console.log("Usb connected, updating status.");
       this.setState({
         state: this.StateConnectingTetris
       });
       this.attemptTetrisConnection();
-    }).catch(() => {
-      console.log("CATTTCH");
+
+    } catch (e) {
+      console.error(e);
       this.setState({
         state: this.StateConnect
       });
-    });
+    }
   }
 
   updateLevel(level) {
-    if(this.state.level !== level) {
+    if (this.state.level !== level) {
       console.log("Level increased!");
       console.log(level);
       this.setState({
@@ -79,7 +82,7 @@ class OnlineTetris extends React.Component {
   startMusicTimer() {
     setTimeout(() => {
       console.log("Sending music")
-      if(this.state.state === this.StateSelectMusic) {
+      if (this.state.state === this.StateSelectMusic) {
         console.log("Music sent")
         this.serial.sendHex(this.state.music);
         this.serial.read(64);
@@ -94,7 +97,7 @@ class OnlineTetris extends React.Component {
   startHandicapTimer() {
     setTimeout(() => {
       console.log("Handicap timer");
-      if(this.state.state === this.StateSelectHandicap) {
+      if (this.state.state === this.StateSelectHandicap) {
         console.log("Sending handicap");
         // Just send a fake handicap
         this.serial.sendHex("00");
@@ -112,43 +115,41 @@ class OnlineTetris extends React.Component {
   }
 
   startGameTimer() {
-    setTimeout(() => {
+    setTimeout(async () => {
       this.serial.bufSendHex("02", 10); // fixed level
-      this.serial.read(64).then(result => {
-        const data = result.data.buffer;
-        if (data.length > 1) {
-          console.log("Data too long");
-          console.log(data.length);
-          // We ignore if we still have old data in the buffer.
-          this.startGameTimer();
-        } else {
-
-          const value = (new Uint8Array(data))[0];
-          if (value < 20) {
-            this.updateLevel(value);
-          } else if ((value >= 0x80) && (value <= 0x85)) { // lines sent
-            console.log("Sending lines!");
-            this.gb.sendLines(0x83);
-          } else if (value === 0xaa) { // we lost...
-            this.setState({
-              state: this.StateFinished
-            });
-            this.gb.sendDead();
-          } else if (value === 0xFF) { //screen is filled after loss
-            this.serial.bufSendHex("43", 10);
-          }
-
-        }
+      const result = await this.serial.read(64);
+      const data = result.data.buffer;
+      if (data.length > 1) {
+        console.log("Data too long");
+        console.log(data.length);
+        // We ignore if we still have old data in the buffer.
         this.startGameTimer();
-      });
+      } else {
+        const value = new Uint8Array(data)[0];
+        if (value < 20) {
+          this.updateLevel(value);
+        } else if ((value >= 0x80) && (value <= 0x85)) { // lines sent
+          console.log("Sending lines!");
+          this.gb.sendLines(0x83);
+        } else if (value === 0xaa) { // we lost...
+          this.setState({
+            state: this.StateFinished
+          });
+          this.gb.sendDead();
+        } else if (value === 0xFF) { //screen is filled after loss
+          this.serial.bufSendHex("43", 10);
+        }
 
+      }
+      this.startGameTimer();
     }, 100);
   }
 
-  attemptTetrisConnection() {
+  async attemptTetrisConnection() {
     console.log("Attempt connection...");
     this.serial.sendHex("29");
-    this.serial.readHex(64).then(result => {
+    try {
+      const result = await this.serial.readHex(64);
       if(result === "55") {
         console.log("SUCCESS!\n");
 
@@ -156,19 +157,16 @@ class OnlineTetris extends React.Component {
           state: this.StateSelectMusic
         });
         this.startMusicTimer();
-        
       } else {
         console.log("Fail");
         setTimeout(() => {
-      
           this.attemptTetrisConnection();
         }, 100);
       }
-    },
-    error => {
-      console.log("ERROR");
-      console.log(error);
-    });
+    } catch (error) {
+      console.error("ERROR");
+      console.error(error);
+    }
   }
 
   handleMusicSelected() {

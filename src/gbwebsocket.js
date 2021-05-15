@@ -8,42 +8,26 @@ class GBWebsocket {
 
     constructor(url, name) {
         this.ws = new WebSocket(url);
-        this.ws.onmessage = (function(event) {
+        this.ws.onmessage = (event) => {
             console.log(this);
             this.onMessage(event);
-        }).bind(this); // required to this points to GBWebsocket, not the websocket instance.
+        };
 
-        this.onconnected = function() {
-            console.log("On connected not implemented");
-        }
+        this.onconnected = () => console.log("On connected not implemented")
 
-        this.oninfoupdate = function() {
-            console.log("On info update not implemented!");
-        }
-        this.ongamestart = function() {
-            console.log("On game start not implemented!");
-        }
+        this.oninfoupdate = () => console.log("On info update not implemented!")
 
-        this.ongameupdate = function() {
-            console.log("Game update not implemented!");
-        }
+        this.ongamestart = () => console.log("On game start not implemented!")
 
-        this.ongameend = function() {
-            console.log("Game end not implemented!");
-        }
+        this.ongameupdate = () => console.log("Game update not implemented!")
 
-        this.onuserinfo = function() {
-            console.log("User info not implemented!")
-        }
+        this.ongameend = () => console.log("Game end not implemented!")
 
-        this.onlines = function() {
-            console.log("Lines not implemented!")
-        }
+        this.onuserinfo = () => console.log("User info not implemented!")
 
-        this.onwin = function() {
-            console.log("Win not implemented!")
-        }
-        console.log(this.ongameupdate);
+        this.onlines = () => console.log("Lines not implemented!")
+
+        this.onwin = () => console.log("Win not implemented!")
 
         this.admin = false;
         this.name = name;
