@@ -1,13 +1,10 @@
 const fromHexString = hexString =>
     new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
-
-    
 class GBWebsocket {
     // Needs to be in sync with server!!!
     GAME_STATE_FINISHED = 2
     GAME_STATE_ERROR = 9998
-    GAME_STATE_NONE = 9999
 
     constructor(url, name) {
         this.ws = new WebSocket(url);
@@ -16,34 +13,34 @@ class GBWebsocket {
             this.onMessage(event);
         }).bind(this); // required to this points to GBWebsocket, not the websocket instance.
 
-        this.onconnected = function(gb) {
+        this.onconnected = function() {
             console.log("On connected not implemented");
         }
 
-        this.oninfoupdate = function(gb) {
+        this.oninfoupdate = function() {
             console.log("On info update not implemented!");
         }
-        this.ongamestart = function(gb) {
+        this.ongamestart = function() {
             console.log("On game start not implemented!");
         }
 
-        this.ongameupdate = function(gb) {
+        this.ongameupdate = function() {
             console.log("Game update not implemented!");
         }
 
-        this.ongameend = function(gb) {
+        this.ongameend = function() {
             console.log("Game end not implemented!");
         }
 
-        this.onuserinfo = function(gb) {
+        this.onuserinfo = function() {
             console.log("User info not implemented!")
         }
 
-        this.onlines = function(gb, lines) {
+        this.onlines = function() {
             console.log("Lines not implemented!")
         }
 
-        this.onwin = function(gb) {
+        this.onwin = function() {
             console.log("Win not implemented!")
         }
         console.log(this.ongameupdate);
@@ -51,7 +48,6 @@ class GBWebsocket {
         this.admin = false;
         this.name = name;
         this.game_name = "YOU SHOULD NEVER SEE THIS"; // famous last words
-        this.game_status = this.GAME_STATE_NONE;
         this.users = []
         this.uuid = ""
         this.waitForConnection();
@@ -105,7 +101,7 @@ class GBWebsocket {
     }
 
     static initiateGame(name) {
-        var gb = new GBWebsocket("wss://server.tetris.stacksmashing.net:5678/create", name);
+        const gb = new GBWebsocket("wss://server.tetris.stacksmashing.net:5678/create", name);
         gb.admin = true;
         return gb;
     }
@@ -118,14 +114,13 @@ class GBWebsocket {
         console.log("onMessage");
         console.log(event);
         console.log("Parsed message:");
-        var message = JSON.parse(event.data);
+        const message = JSON.parse(event.data);
         console.log(message);
 
         switch(message.type) {
             case "game_info":
                 console.log("New game info");
                 this.game_name = message.name;
-                this.game_status = message.state;
                 this.users = message.users;
                 this.oninfoupdate(this);
                 break;

@@ -41,7 +41,7 @@ class OnlineTetris extends React.Component {
       difficulty: 0,
       uuid: "",
       admin: false
-    }
+    };
   }
 
   handleConnectClick() {
@@ -53,10 +53,9 @@ class OnlineTetris extends React.Component {
       console.log("Usb connected, updating status.");
       this.setState({
         state: this.StateConnectingTetris
-        
       });
       this.attemptTetrisConnection();
-    }).catch(c => {
+    }).catch(() => {
       console.log("CATTTCH");
       this.setState({
         state: this.StateConnect
@@ -99,7 +98,7 @@ class OnlineTetris extends React.Component {
         console.log("Sending handicap");
         // Just send a fake handicap
         this.serial.sendHex("00");
-        var selectedDifficulty = this.serial.read(1)[0];
+        const selectedDifficulty = this.serial.read(1)[0];
         console.log("Selected difficulty:");
         console.log(selectedDifficulty);
         this.setState({
@@ -115,35 +114,34 @@ class OnlineTetris extends React.Component {
   startGameTimer() {
     setTimeout(() => {
       this.serial.bufSendHex("02", 10); // fixed level
-      var data = this.serial.read(64).then( result => {
-        var data = result.data.buffer;
-        if(data.length > 1) {
+      this.serial.read(64).then(result => {
+        const data = result.data.buffer;
+        if (data.length > 1) {
           console.log("Data too long");
           console.log(data.length);
           // We ignore if we still have old data in the buffer.
           this.startGameTimer();
         } else {
-          
-          var value = (new Uint8Array(data))[0];
-          if(value < 20) {
+
+          const value = (new Uint8Array(data))[0];
+          if (value < 20) {
             this.updateLevel(value);
-          } else if((value >= 0x80) && (value <= 0x85)) { // lines sent
+          } else if ((value >= 0x80) && (value <= 0x85)) { // lines sent
             console.log("Sending lines!");
             this.gb.sendLines(0x83);
-          }
-          else if(value === 0xaa) { // we lost...
+          } else if (value === 0xaa) { // we lost...
             this.setState({
               state: this.StateFinished
             });
             this.gb.sendDead();
-          } else if(value === 0xFF) { //screen is filled after loss
+          } else if (value === 0xFF) { //screen is filled after loss
             this.serial.bufSendHex("43", 10);
           }
-          
+
         }
         this.startGameTimer();
       });
-      
+
     }, 100);
   }
 
@@ -241,12 +239,11 @@ class OnlineTetris extends React.Component {
   }
 
   testUpdate() {
-    var level = this.state.level;
-    level += 1;
+    const level = this.state.level + 1;
     this.setState({
       level: level
     });
-    this.gb.sendLevel(level)
+    this.gb.sendLevel(level);
   }
 
   testStart() {
@@ -255,7 +252,7 @@ class OnlineTetris extends React.Component {
   
   gbConnected(gb) {
     console.log("We're connected!");
-    console.log(gb.users)
+    console.log(gb.users);
     this.setState({
       game_code: gb.game_name,
       users: gb.users,
@@ -265,7 +262,7 @@ class OnlineTetris extends React.Component {
 
   gbGameStart(gb) {
     console.log(this);
-    console.log("Got game start.")
+    console.log("Got game start.");
 
     // step 1: start game message
     this.serial.bufSendHex("60", 150);
@@ -274,7 +271,7 @@ class OnlineTetris extends React.Component {
 
     console.log("Sending unknown bytes");
     // step 3: send 100 unknown bytes
-    for(var i=0; i < 100; i++) {
+    for (let i = 0; i < 100; i++) {
       this.serial.bufSendHex("83", 4);
     }
 
@@ -282,7 +279,7 @@ class OnlineTetris extends React.Component {
     this.serial.bufSendHex("29", 8);
     console.log("Sending tiles");
     // step 5: send tiles
-    for(var i=0; i < gb.tiles.length; i++) {
+    for (let i = 0; i < gb.tiles.length; i++) {
       this.serial.bufSend(new Uint8Array([gb.tiles[i]]), 4);
     }
 
@@ -303,11 +300,11 @@ class OnlineTetris extends React.Component {
     
   }
 
-  gbGameUpdate(gb) {
+  gbGameUpdate() {
     console.log("game update");
   }
 
-  gbGameEnd(gb) {
+  gbGameEnd() {
     console.log("game end");
   }
   
@@ -333,7 +330,7 @@ class OnlineTetris extends React.Component {
     this.serial.bufSend(new Uint8Array([lines]), 10);
   }
 
-  gbWin(gb) {
+  gbWin() {
     console.log("WIN!");
     this.serial.bufSendHex("AA", 50); // aa indicates BAR FULL
     this.serial.bufSendHex("02", 50); // ffffinish
@@ -354,7 +351,6 @@ class OnlineTetris extends React.Component {
     })
   }
 
-
   handleGameCodeChanged(event) {
     this.setState({
       game_code: event.target.value
@@ -373,7 +369,6 @@ class OnlineTetris extends React.Component {
     if (navigator.usb) {
       if (this.state.state === this.StateConnect) {
         return (
-
           <div className="connect">
             <img src={process.env.PUBLIC_URL + '/images/animation.gif'} className="gameboy" />
             <h2 className="cover-heading">Tetrilink</h2>
@@ -381,67 +376,71 @@ class OnlineTetris extends React.Component {
             <hr />
             <h4>Connect your Game Boy</h4>
             <p>Connect your Game Boy with the USB to Game Link adapter and click "connect".</p>
-            <button onClick={(e) => this.handleConnectClick()} className="btn btn-lg btn-secondary">Connect</button>
+            <button onClick={() => this.handleConnectClick()} className="btn btn-lg btn-secondary">Connect</button>
             <br/>
             <small>Version: 0.2</small>
           </div>
-        )
+        );
       } else if (this.state.state === this.StateConnecting) {
         return (
           <div className="connect">
             <h2>Connecting...</h2>
           </div>
-        )
-
+        );
       } else if (this.state.state === this.StateConnectingTetris) {
         return (
           <div className="connect">
             <h2>Connecting to Tetris...</h2>
             <p>Ensure your Game Boy is turned on and in the Tetris main menu.</p>
           </div>
-        )
-
+        );
       } else if (this.state.state === this.StateSelectMusic) {
         return (
           <div className="connect">
             <h2>Connection established!</h2>
             <h4>Choose your tunes:</h4>
 
-            <button onClick={(e) => this.setMusic(this.SONG_A)} className="musicButton btn btn-lg btn-secondary">MUSIC A</button>
-            <button onClick={(e) => this.setMusic(this.SONG_B)} className="musicButton btn btn-lg btn-secondary">MUSIC B</button><br/>
+            <button onClick={() => this.setMusic(this.SONG_A)} className="musicButton btn btn-lg btn-secondary">MUSIC A</button>
+            <button onClick={() => this.setMusic(this.SONG_B)} className="musicButton btn btn-lg btn-secondary">MUSIC B</button><br/>
             <hr/>
-            <button onClick={(e) => this.setMusic(this.SONG_C)} className="musicButton btn btn-lg btn-secondary">MUSIC C</button>
-            <button onClick={(e) => this.setMusic(this.SONG_OFF)} className="musicButton btn btn-lg btn-secondary">MUSIC OFF</button><br/>
+            <button onClick={() => this.setMusic(this.SONG_C)} className="musicButton btn btn-lg btn-secondary">MUSIC C</button>
+            <button onClick={() => this.setMusic(this.SONG_OFF)} className="musicButton btn btn-lg btn-secondary">MUSIC OFF</button><br/>
             <p>(Though obviously A is the best...)</p>
             <br/>
-            <button onClick={(e) => this.handleMusicSelected()} className="btn btn-lg btn-secondary">Next</button>
+            <button onClick={() => this.handleMusicSelected()} className="btn btn-lg btn-secondary">Next</button>
           </div>
-        )
-      } else if(this.state.state === this.StateSelectHandicap) {
+        );
+      } else if (this.state.state === this.StateSelectHandicap) {
         return (
           <div className="connect">
             <SelectGame onCreateGame={(name) => this.handleCreateGame(name)} onJoinGame={(name, code) => this.handleJoinGame(name, code)} />
-          </div>)
-      } else if(this.state.state === this.StateJoiningGame) {
-        return(<div className="connect">
-          <h2>Connecting to game server...</h2>
-        </div>)
-      } else if(this.state.state === this.StateLobby) {
-        return(<div className="connect">
-          <Lobby game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} onStartGame={() => this.handleStartGame()} />
-        </div>)
-      } else if(this.state.state === this.StateStartingGame) {
-        return(<div className="connect">
-          <h2>Starting game...</h2>
-        </div>)
-
-      } else if(this.state.state === this.StateInGame) {
-        return(<div className="connect">
-
-          <InGame game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} />
-        </div>)
-        
-      } else if(this.state.state === this.StateJoinGame) {
+          </div>
+        );
+      } else if (this.state.state === this.StateJoiningGame) {
+        return (
+            <div className="connect">
+                <h2>Connecting to game server...</h2>
+            </div>
+        );
+      } else if (this.state.state === this.StateLobby) {
+        return (
+            <div className="connect">
+                <Lobby game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} onStartGame={() => this.handleStartGame()} />
+            </div>
+        );
+      } else if (this.state.state === this.StateStartingGame) {
+        return (
+            <div className="connect">
+                <h2>Starting game...</h2>
+            </div>
+        );
+      } else if (this.state.state === this.StateInGame) {
+        return (
+            <div className="connect">
+                <InGame game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} />
+            </div>
+        );
+      } else if (this.state.state === this.StateJoinGame) {
         return (
           <div className="connect">
             <h2>Select a username</h2>
@@ -449,26 +448,22 @@ class OnlineTetris extends React.Component {
             <hr/>
             <h3>Join a game? Enter the game code here:</h3>
             <input type="text" onChange={this.handleGameCodeChanged.bind(this)} value={this.state.game_code} placeholder="Game code"/>
-            <button onClick={(e) => this.testJoin()} className="btn btn-lg btn-secondary">Join game</button>
+            <button onClick={this.testJoin.bind(this)} className="btn btn-lg btn-secondary">Join game</button>
             <hr/>
-            <button onClick={(e) => this.testCreate()} className="btn btn-lg btn-secondary">Create new game</button>
+            <button onClick={this.testCreate.bind(this)} className="btn btn-lg btn-secondary">Create new game</button>
           </div>
-        )
-      } else if(this.state.state === this.StateFinished) {
-        return (<div className="connect">
-          <InGame game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} uuid={this.state.uuid} />
-            <h2>Game finished!</h2>
-            </div>)
-      } else {
+        );
+      } else if (this.state.state === this.StateFinished) {
         return (
-          <div>Invalid state {this.state.state}</div>
-        )
+            <div className="connect">
+               <InGame game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} uuid={this.state.uuid} />
+                <h2>Game finished!</h2>
+            </div>
+        );
       }
-    } else {
-      return (
-        <h2>Sorry, your browser does not support WebUSB!</h2>
-      )
+      return (<div>Invalid state {this.state.state}</div>)
     }
+    return (<h2>Sorry, your browser does not support WebUSB!</h2>);
   }
 }
 

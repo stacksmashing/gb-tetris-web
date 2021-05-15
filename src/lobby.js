@@ -4,11 +4,11 @@ import {Player} from './player.js';
 
 class Lobby extends React.Component {
     render() {
-        var userbar;
-        if(this.props.admin) {
-            userbar = <button onClick={(e) => this.props.onStartGame()} className="btn btn-lg btn-secondary">Start game!</button>
+        let userBar;
+        if (this.props.admin) {
+            userBar = <button onClick={this.props.onStartGame} className="btn btn-lg btn-secondary">Start game!</button>;
         } else {
-            userbar = <p>Please wait for the lobby leader to start the game!</p>
+            userBar = <p>Please wait for the lobby leader to start the game!</p>;
         }
 
         return (
@@ -17,14 +17,14 @@ class Lobby extends React.Component {
                 <h4>Players:</h4>
                 <div className="container">
                     <div className="row justify-content-center">
-                            {this.props.users.map((user, index) => (
-                                <Player key="lobby-{user.name}" user={user} />
+                        {this.props.users.map((user) => (
+                            <Player key={`lobby-${user.name}`} user={user} />
                         ))}
                     </div>
                 </div>
-                {userbar}
+                {userBar}
             </div>
-        )
+        );
     }
 }
 

@@ -2,15 +2,15 @@ import React from 'react';
 
 class SelectGame extends React.Component {
     generateName() {
-        var prefixes = [
+        const prefixes = [
             "Green",
             "Yellow",
             "Red",
             "Purple",
             "Blue",
             "Orange"
-        ]
-        var suffixes = [
+        ];
+        const suffixes = [
             "I-Piece",
             "O-Piece",
             "T-Piece",
@@ -18,7 +18,7 @@ class SelectGame extends React.Component {
             "L-Piece",
             "S-Piece",
             "Z-Piece"
-        ]
+        ];
 
         return prefixes[Math.floor(Math.random() * prefixes.length)] + " " + suffixes[Math.floor(Math.random() * suffixes.length)];
     }
@@ -34,19 +34,18 @@ class SelectGame extends React.Component {
     handleNameChanged(event) {
         this.setState({
             name: event.target.value
-        })
+        });
     }
 
 
     handleGameCodeChanged(event) {
         this.setState({
             game_code: event.target.value
-        })
+        });
     }
 
     render() {
         return (
-
             <div className="connect">
                 <h2>Select a username:</h2>
                 <input type="text" className="form-control username-input" onChange={this.handleNameChanged.bind(this)} value={this.state.name} />
@@ -60,7 +59,7 @@ class SelectGame extends React.Component {
                                         <h4>Create game</h4>
                                     </div>
                                     <div className="card-text">
-                                        <button onClick={(e) => this.props.onCreateGame(this.state.name)} className="btn btn-lg btn-secondary">Create</button>
+                                        <button onClick={() => this.props.onCreateGame(this.state.name)} className="btn btn-lg btn-secondary">Create</button>
                                     </div>
                                 </div>
                             </div>
@@ -73,7 +72,7 @@ class SelectGame extends React.Component {
                                     </div>
                                     <div className="card-text">
                                     <input type="text" className="form-control game-code-input" onChange={this.handleGameCodeChanged.bind(this)} value={this.state.game_code} placeholder="ABCDEF" />
-                                        <button onClick={(e) => this.props.onJoinGame(this.state.name, this.state.game_code)} className="btn btn-lg btn-secondary">Join</button>
+                                        <button onClick={() => this.props.onJoinGame(this.state.name, this.state.game_code)} className="btn btn-lg btn-secondary">Join</button>
                                     </div>
                                 </div>
                             </div>
@@ -82,7 +81,7 @@ class SelectGame extends React.Component {
                 </div>
                 <hr />
             </div>
-        )
+        );
     }
 }
 

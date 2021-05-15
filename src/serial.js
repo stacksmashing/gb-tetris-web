@@ -1,4 +1,3 @@
-
 const fromHexString = hexString =>
     new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 
@@ -19,16 +18,12 @@ class Serial {
             { 'vendorId': 0x239A }, // Adafruit boards
             { 'vendorId': 0xcafe }, // TinyUSB example
         ];
-        return navigator.usb.requestDevice({ 'filters': filters }).then(
-            device => {
-                return device;
-            }
-        );
+        return navigator.usb.requestDevice({ 'filters': filters });
     }
 
     getEndpoints(interfaces) {
         interfaces.forEach(element => {
-            var alternates = element.alternates;
+            const alternates = element.alternates;
             alternates.forEach(elementalt => {
                 if (elementalt.interfaceClass === 0xFF) {
                     console.log("Interface number:");
@@ -49,13 +44,13 @@ class Serial {
                     });
                 }
             })
-        })
+        });
     }
 
     getDevice() {
         let device = null;
         this.ready = false;
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             Serial.requestPort().then(dev => {
                 console.log("Opening device...");
                 device = dev;
@@ -121,13 +116,13 @@ class Serial {
         this.device.transferIn(this.epIn, 64).then(result => {
             console.log("ReadResult");
             console.log(result);
-            let textDecoder = new TextDecoder();
+            const textDecoder = new TextDecoder();
             console.log(textDecoder.decode(result.data));
         },
-            error => {
-                console.log("ReadError");
-                console.log(error);
-            })
+        error => {
+            console.log("ReadError");
+            console.log(error);
+        })
     }
 
     sendString(str) {
@@ -148,9 +143,9 @@ class Serial {
             this.send_active = false;
             return;
         }
-        var element = this.buffer.shift();
-        var data = element[0];
-        var delay = element[1];
+        const element = this.buffer.shift();
+        const data = element[0];
+        const delay = element[1];
         this.send(data).then(() => {
             setTimeout(() => {
                 this.bufSendFunction();
@@ -161,13 +156,13 @@ class Serial {
     bufSend(data, delay) {
         this.buffer.push([data, delay]);
         // Sender is not active, create new one
-        if(!this.send_active) {
+        if (!this.send_active) {
             this.bufSendFunction();
         }
     }
 
     bufSendHex(str, delay) {
-        var data = fromHexString(str);
+        const data = fromHexString(str);
         this.bufSend(data, delay);
     }
 }
