@@ -183,10 +183,6 @@ body {
   display: inline;
 }
 
-.game-create-button {
-  margin-top: 10px;
-}
-
 .game-random-button {
   margin-right: 10px;
 }
@@ -203,5 +199,12 @@ body {
 
 .custom-card {
   background-color: #444;
-  height: 194px;
+  height: 220px;
+}
+
+.card-options {
+  border: 1px solid white;
+  border-radius: 5px;
+  padding: 5px;
+  margin-bottom: 5px;
 }

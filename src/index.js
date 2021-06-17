@@ -74,6 +74,7 @@ class OnlineTetris extends React.Component {
       name: "Foo",
       game_code: "",
       users: [],
+      options: {},
       level: 0,
       difficulty: 0,
       uuid: "",
@@ -229,7 +230,7 @@ class OnlineTetris extends React.Component {
     this.timeoutFoo();
   }
 
-  handleCreateGame(name, randomtype) {
+  handleCreateGame(name, options) {
     console.log("Create new game");
     console.log(name);
     this.setState({
@@ -237,7 +238,7 @@ class OnlineTetris extends React.Component {
       admin: true,
       name: name
     })
-    this.gb = GBWebsocket.initiateGame(name, randomtype);
+    this.gb = GBWebsocket.initiateGame(name, options);
     this.setGbCallbacks();
   }
 
@@ -368,9 +369,11 @@ class OnlineTetris extends React.Component {
     console.log(this);
     console.log("Got game update.")
     console.log(gb.users)
+    console.log(gb.options)
     this.setState({
       game_code: gb.game_name,
-        users: gb.users
+      users: gb.users,
+      options: gb.options
     });
   }
 
@@ -467,7 +470,7 @@ class OnlineTetris extends React.Component {
       } else if(this.state.state === this.StateSelectHandicap) {
         return (
           <div className="connect">
-            <SelectGame onCreateGame={(name) => this.handleCreateGame(name)} onJoinGame={(name, code) => this.handleJoinGame(name, code)} />
+            <SelectGame onCreateGame={(name, options) => this.handleCreateGame(name, options)} onJoinGame={(name, code) => this.handleJoinGame(name, code)} />
           </div>)
       } else if(this.state.state === this.StateJoiningGame) {
         return(<div className="connect">
@@ -476,7 +479,7 @@ class OnlineTetris extends React.Component {
       } else if(this.state.state === this.StateLobby) {
         return(<div className="connect">
           {/* <h2>In lobby :)</h2> */}
-          <Lobby game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} onStartGame={() => this.handleStartGame()} />
+          <Lobby game_code={this.state.game_code} users={this.state.users} admin={this.state.admin} options={this.state.options} onStartGame={() => this.handleStartGame()} />
         </div>)
       } else if(this.state.state === this.StateStartingGame) {
         return(<div className="connect">

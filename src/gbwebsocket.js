@@ -56,6 +56,7 @@ class GBWebsocket {
         this.game_name = "YOU SHOULD NEVER SEE THIS"; // famous last words
         this.game_status = this.GAME_STATE_NONE;
         this.users = []
+        this.options = {}
         this.uuid = ""
         this.waitForConnection();
     }
@@ -67,11 +68,21 @@ class GBWebsocket {
         }));
     }
 
+    sendOptionsMessage(options) {
+        this.ws.send(JSON.stringify({
+            "type": "options",
+            "options": options
+        }));
+    }
+
     waitForConnection() {
         if(this.ws.readyState === 1) {
             console.log("Connection ready")
             // Send register message and alert state
             this.sendRegisterMessage();
+            if (this.admin && this.options) {
+                this.sendOptionsMessage(this.options);
+            }
             this.onconnected(this);
         } else {
             setTimeout(
@@ -107,9 +118,10 @@ class GBWebsocket {
         }))
     }
 
-    static initiateGame(name, randomtype) {
-        var gb = new GBWebsocket("wss://server.tetris.stacksmashing.net:5678/create" + randomtype, name);
+    static initiateGame(name, options) {
+        var gb = new GBWebsocket("wss://server.tetris.stacksmashing.net:5678/create", name);
         gb.admin = true;
+        gb.options = options;
         return gb;
     }
 
@@ -130,6 +142,7 @@ class GBWebsocket {
                 this.game_name = message.name;
                 this.game_status = message.state;
                 this.users = message.users;
+                this.options = message.options;
                 this.oninfoupdate(this);
                 break;
             case "user_info":

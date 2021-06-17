@@ -27,7 +27,10 @@ class SelectGame extends React.Component {
         super(props);
         this.state = {
             name: localStorage.getItem('name') || this.generateName(),
-            game_code: ""
+            game_code: "",
+            options: {
+                randomtype: localStorage.getItem('options.randomtype') ||"classic"
+            }
         };
     }
 
@@ -38,6 +41,24 @@ class SelectGame extends React.Component {
         })
     }
 
+
+    handleGameRandomisationChanged(value) {
+        return (event) => {
+            localStorage.setItem('options.randomtype', value);
+            this.setState({
+                options: {
+                    ...this.state.options,
+                    randomtype: value
+                }
+            })
+        }
+    }
+    isClassicRandomisation() {
+        return this.state.options.randomtype == 'classic';
+    }
+    isModernRandomisation() {
+        return this.state.options.randomtype == 'modern';
+    }
 
     handleGameCodeChanged(event) {
         this.setState({
@@ -61,9 +82,18 @@ class SelectGame extends React.Component {
                                         <h4>Create game</h4>
                                     </div>
                                     <div className="card-text">
-                                        <h6>Randomisation:</h6>
-                                        <button class="btn btn-secondary game-random-button" onClick={this.state.randomtype = 0}>Classic</button><button class="btn btn-secondary" onClick={this.state.randomtype = 1}>Modern</button>
-                                        <button onClick={(e) => this.props.onCreateGame(this.state.name, this.state.randomtype)} className="btn btn-lg btn-secondary game-create-button">Create</button>
+                                        <div className="card-options">
+                                            <h6>Randomisation:</h6>
+                                            <div className="btn-group btn-group-toggle" data-toggle="buttons">
+                                                <label className={`btn btn-dark ${ this.isClassicRandomisation() ? 'active' : '' }`}>
+                                                    <input type="radio" name="randomisation" id="random-classic" autoComplete="off" checked={this.isClassicRandomisation()} onChange={this.handleGameRandomisationChanged("classic")}/> Classic
+                                                </label>
+                                                <label className={`btn btn-dark ${ this.isModernRandomisation() ? 'active' : '' }`}>
+                                                    <input type="radio" name="randomisation" id="random-modern" autoComplete="off" checked={this.isModernRandomisation()} onChange={this.handleGameRandomisationChanged("modern")}/> Modern
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <button onClick={(e) => this.props.onCreateGame(this.state.name, this.state.options)} className="btn btn-lg btn-secondary game-create-button">Create</button>
                                     </div>
                                 </div>
                             </div>
