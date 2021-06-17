@@ -183,6 +183,14 @@ body {
   display: inline;
 }
 
+.game-create-button {
+  margin-top: 10px;
+}
+
+.game-random-button {
+  margin-right: 10px;
+}
+
 .game-code-input {
   background-color: rgb(65, 65, 65);
   color: white;

@@ -107,8 +107,8 @@ class GBWebsocket {
         }))
     }
 
-    static initiateGame(name) {
-        var gb = new GBWebsocket("wss://server.tetris.stacksmashing.net:5678/create", name);
+    static initiateGame(name, randomtype) {
+        var gb = new GBWebsocket("wss://server.tetris.stacksmashing.net:5678/create" + randomtype, name);
         gb.admin = true;
         return gb;
     }

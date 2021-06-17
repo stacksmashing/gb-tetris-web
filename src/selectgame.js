@@ -61,7 +61,9 @@ class SelectGame extends React.Component {
                                         <h4>Create game</h4>
                                     </div>
                                     <div className="card-text">
-                                        <button onClick={(e) => this.props.onCreateGame(this.state.name)} className="btn btn-lg btn-secondary">Create</button>
+                                        <h6>Randomisation:</h6>
+                                        <button class="btn btn-secondary game-random-button" onClick={this.state.randomtype = 0}>Classic</button><button class="btn btn-secondary" onClick={this.state.randomtype = 1}>Modern</button>
+                                        <button onClick={(e) => this.props.onCreateGame(this.state.name, this.state.randomtype)} className="btn btn-lg btn-secondary game-create-button">Create</button>
                                     </div>
                                 </div>
                             </div>

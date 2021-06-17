@@ -229,7 +229,7 @@ class OnlineTetris extends React.Component {
     this.timeoutFoo();
   }
 
-  handleCreateGame(name) {
+  handleCreateGame(name, randomtype) {
     console.log("Create new game");
     console.log(name);
     this.setState({
@@ -237,7 +237,7 @@ class OnlineTetris extends React.Component {
       admin: true,
       name: name
     })
-    this.gb = GBWebsocket.initiateGame(name);
+    this.gb = GBWebsocket.initiateGame(name, randomtype);
     this.setGbCallbacks();
   }
 
