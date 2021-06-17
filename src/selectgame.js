@@ -26,12 +26,13 @@ class SelectGame extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: this.generateName(),
+            name: localStorage.getItem('name') || this.generateName(),
             game_code: ""
         };
     }
 
     handleNameChanged(event) {
+        localStorage.setItem('name', event.target.value);
         this.setState({
             name: event.target.value
         })
