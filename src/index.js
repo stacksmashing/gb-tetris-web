@@ -167,7 +167,7 @@ class OnlineTetris extends React.Component {
             this.updateLevel(value);
           } else if((value >= 0x80) && (value <= 0x85)) { // lines sent
             console.log("Sending lines!");
-            this.gb.sendLines(0x83);
+            this.gb.sendLines(value);
           }
           else if(value === 0xaa) { // we lost...
             this.setState({
