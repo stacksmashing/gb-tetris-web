@@ -7,9 +7,16 @@ class Player extends React.Component {
     STATE_WINNER = 2
     render() {
         if(this.props.user.state === this.STATE_ALIVE) {
+            if(this.props.user.level<6){
+              himage = 'safe.gif';
+            } else if(this.props.user.level <12) {
+              himage = 'medium.gif';
+            } else {
+              himage = 'warning.gif';
+            }
             return (
                 <div className="col-3">
-                    <img src={process.env.PUBLIC_URL + '/images/animation.gif'} className="gameboy" />
+                    <img src={process.env.PUBLIC_URL + '/images/'+himage+'.gif'} className="gameboy" />
                     <p><b>{this.props.user.name}</b><br/>
                     Height: {this.props.user.level}</p>
                 </div>
