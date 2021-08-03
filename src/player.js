@@ -9,7 +9,7 @@ class Player extends React.Component {
         if(this.props.user.state === this.STATE_ALIVE) {
             return (
                 <div className="col-3">
-                    <img src={process.env.PUBLIC_URL + '/images/animation.gif'} className="gameboy" />
+                    <img src={process.env.PUBLIC_URL + '/images/animation.gif'} alt="" className="gameboy" />
                     <p><b>{this.props.user.name}</b><br/>
                     Height: {this.props.user.level}</p>
                 </div>
@@ -17,7 +17,7 @@ class Player extends React.Component {
         } else if(this.props.user.state === this.STATE_DEAD) {
             return (
                 <div className="col-3">
-                    <img src={process.env.PUBLIC_URL + '/images/dead.png'} className="gameboy" />
+                    <img src={process.env.PUBLIC_URL + '/images/dead.png'} alt="" className="gameboy" />
                     <p><b>{this.props.user.name}</b><br/>
                     Game Over</p>
                 </div>
@@ -25,7 +25,7 @@ class Player extends React.Component {
         } else if(this.props.user.state === this.STATE_WINNER) {
             return (
                 <div className="col-3">
-                    <img src={process.env.PUBLIC_URL + '/images/win.png'} className="gameboy" />
+                    <img src={process.env.PUBLIC_URL + '/images/win.png'} alt="" className="gameboy" />
                     <p><b>{this.props.user.name}</b><br/>
                     Winner!!!</p>
                 </div>

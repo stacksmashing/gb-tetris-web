@@ -421,11 +421,11 @@ class OnlineTetris extends React.Component {
         return (
 
           <div className="connect">
-            <img src={process.env.PUBLIC_URL + '/images/animation.gif'} className="gameboy" />
-            <h2 className="cover-heading">Tetrilink</h2>
+            <img src={process.env.PUBLIC_URL + '/images/animation.gif'} alt="Game Boy" className="gameboy" />
+            <h1 className="cover-heading">Tetrilink</h1>
             <p className="lead">Connect your Game Boy, boot Tetris, and start playing with your friends!</p>
             <hr />
-            <h4>Connect your Game Boy</h4>
+            <h2>Connect your Game Boy</h2>
             <p>Connect your Game Boy with the USB to Game Link adapter and click "connect".</p>
             <button onClick={(e) => this.handleConnectClick()} className="btn btn-lg btn-secondary">Connect</button>
             <br/>
